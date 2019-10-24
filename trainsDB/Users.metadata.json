@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"trainsDB.Users"}],"uuid":"2ad9dac3ab784fba8ec57d4496fbf47f"}
