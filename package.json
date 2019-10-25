@@ -1,12 +1,12 @@
 {
   "name": "project2",
   "version": "1.0.0",
-  "description": "",
-  "main": "dist/server.js",
+  "description": "Express/Mongo server application (to be used as backend for module 3)",
+  "main": "scripts/build/server.js",
   "dependencies": {
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
-    "mongodb": "^3.3.2"
+    "mongodb": "^3.3.3"
   },
   "devDependencies": {
     "@types/body-parser": "^1.17.1",
@@ -20,7 +20,7 @@
     "typescript": "^3.6.3"
   },
   "scripts": {
-    "clean": "rimraf dist/*",
+    "clean": "rimraf scripts/build/*",
     "lint": "tslint -c tslint.json -p tsconfig.json --fix",
     "tsc": "tsc",
     "build": "npm-run-all clean lint tsc",
@@ -28,8 +28,8 @@
     "dev": "ts-node-dev --respawn --transpileOnly ./src/server.ts",
     "prod": "npm-run-all build start",
     "prod-deb": "npm-run-all start-deb",
-    "start": "nodemon --nolazy ./dist/server.js",
-    "start-deb": "nodemon --nolazy --inspect-brk=5858 ./dist/server.js",
+    "start": "nodemon --nolazy .scripts/build/server.js",
+    "start-deb": "nodemon --nolazy --inspect-brk=5858 .scripts/build/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -37,7 +37,7 @@
     "url": "git+https://github.com/CISC474-2019F-Group1/Project2.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "karlstom",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/CISC474-2019F-Group1/Project2/issues"
