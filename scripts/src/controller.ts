@@ -4,6 +4,11 @@ export class Controller {
     public getHello(req: express.Request, res: express.Response): void {
         res.send("Hello World");
     }
+
+    //example of how to use query strings, any post to /api/hello/{anyString}
+    // will return that as the body of the response
+    // https://www.javatpoint.com/expressjs-request <-- useful
+    
     public postHello(req: express.Request, res: express.Response): void {
         //console.log(req.params.userid)
         res.send(req.params.userid);
