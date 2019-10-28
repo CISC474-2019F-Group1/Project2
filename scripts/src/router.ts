@@ -9,6 +9,7 @@ export class ApiRouter {
     public getRouter(): express.Router {
         this.router.get("/hello", this.controller.getHello);
         this.router.post("/hello/:userid", this.controller.postHello);
+        this.router.post("/createUsr", this.controller.postCreateUser);
         return this.router;
     }
 }

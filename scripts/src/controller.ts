@@ -1,52 +1,65 @@
 import express from "express";
+import mongodb from "mongodb";
+import { STATUS_CODES } from "http";
+const url = "mongodb://localhost:27017";
 
 export class Controller {
-    public getHello(req: express.Request, res: express.Response): void {
-        res.send("Hello World");
-    }
+  public getHello(req: express.Request, res: express.Response): void {
+    res.send("Hello World");
+  }
 
-    //example of how to use query strings, any post to /api/hello/{anyString}
-    // will return that as the body of the response
-    // https://www.javatpoint.com/expressjs-request <-- useful
-    
-    public postHello(req: express.Request, res: express.Response): void {
-        //console.log(req.params.userid)
-        res.send(req.params.userid);
-    }
+  //example of how to use query strings, any post to /api/hello/{anyString}
+  // will return that as the body of the response
+  // https://www.javatpoint.com/expressjs-request <-- useful
 
-    public getAllTrains(req: express.Request, res: express.Response){
-        //return list of all trains
-    }
+  public postHello(req: express.Request, res: express.Response): void {
+    //console.log(req.params.userid)
+    res.send(req.params.userid);
+  }
 
-    public getTrain(req: express.Request, res: express.Response){
-        //return train based on Train ID
-    }
+  public getAllTrains(req: express.Request, res: express.Response) {
+    //return list of all trains
+  }
 
-    public getUser(req: express.Request, res: express.Response){
-        //return user info
-    }
+  public getTrain(req: express.Request, res: express.Response) {
+    //return train based on Train ID
+  }
 
-    public postCreateUser(req: express.Request, res: express.Response){
-        //return success, add user
-    }
+  public getUser(req: express.Request, res: express.Response) {
+    //return user info
+  }
 
-    public putUpdateCustomer(req: express.Request, res: express.Response){
-        //return success, update customer
-    }
+  public postCreateUser(req: express.Request, res: express.Response) {
+    mongodb.connect(url, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db("trainsDB");
+      var myobj = req.body;
+      dbo.collection("customers").insertOne(myobj, function(err, res) {
+        if (err) throw err;
+        console.log("1 document inserted into Users");
+        db.close();
+      });
+    });
+    res.send(req.statusCode)
+  }
 
-    public putUpdateTicket(req: express.Request, res: express.Response){
-        //update seat, return success/ failure
-    }
+  public putUpdateCustomer(req: express.Request, res: express.Response) {
+    //return success, update customer
+  }
 
-    public getTickets(req: express.Request, res: express.Response){
-        //return list of seats
-    }
+  public putUpdateTicket(req: express.Request, res: express.Response) {
+    //update seat, return success/ failure
+  }
 
-    public getRoutes(req: express.Request, res: express.Response){
-        //return routes
-    }
+  public getTickets(req: express.Request, res: express.Response) {
+    //return list of seats
+  }
 
-    public getStations(req: express.Request, res: express.Response){
-        //return stations
-    }
+  public getRoutes(req: express.Request, res: express.Response) {
+    //return routes
+  }
+
+  public getStations(req: express.Request, res: express.Response) {
+    //return stations
+  }
 }
