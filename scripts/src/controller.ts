@@ -1,7 +1,8 @@
 import express from "express";
-import mongodb from "mongodb";
-import { STATUS_CODES } from "http";
-const url = "mongodb://localhost:27017";
+import mongodb, { ObjectID, ObjectId } from "mongodb";
+const url = "mongodb://vsargeni:smitty@35.231.61.192:27017/trainsDB";
+var MongoClient = mongodb.MongoClient;
+// the above will need to change, may need to talk to silber
 
 export class Controller {
   public getHello(req: express.Request, res: express.Response): void {
@@ -30,21 +31,35 @@ export class Controller {
   }
 
   public postCreateUser(req: express.Request, res: express.Response) {
-    mongodb.connect(url, function(err, db) {
+    mongodb.MongoClient.connect(url, function(err, db) {
       if (err) throw err;
       var dbo = db.db("trainsDB");
       var myobj = req.body;
-      dbo.collection("customers").insertOne(myobj, function(err, res) {
+      //will only worl with header content-type set to application/json
+      dbo.collection("Users").insertOne(myobj, function(err, res) {
         if (err) throw err;
         console.log("1 document inserted into Users");
         db.close();
       });
     });
-    res.send(req.statusCode)
+    res.send(res.statusCode);
   }
 
   public putUpdateCustomer(req: express.Request, res: express.Response) {
-    //return success, update customer
+    mongodb.connect(url, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db("trainsDB");
+      var myquery = { _id : new ObjectId("5db3359121427b0e707a0ac7") };
+      var newvalues = { $set: { firstName: "Peter", lastName: "Canyon" } };
+      dbo
+        .collection("Users")
+        .updateOne(myquery, newvalues, function(err, res) {
+          if (err) throw err;
+          console.log("1 document updated");
+          db.close();
+        });
+    });
+    res.send(res.statusCode)
   }
 
   public putUpdateTicket(req: express.Request, res: express.Response) {
