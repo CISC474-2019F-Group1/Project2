@@ -1,8 +1,8 @@
-import passport from "passport";
 import mongodb from "mongodb";
+import passport from "passport";
+import {ExtractJwt, Strategy as JwtStrategy} from "passport-jwt";
 import {Config} from "./config";
-import {User} from "./user";
-import {Strategy as JwtStrategy, ExtractJwt} from "passport-jwt";
+import {IUser} from "./user";
 
 const jwtOptions = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -16,11 +16,11 @@ const JWTLogin = new JwtStrategy(jwtOptions, function (payload, done) {
         const Users = db.db("trainsDB").collection("Users");
         console.log(payload);
         Users.findOne({ email: payload.email }, function(err, user) {
-            if (err) { 
+            if (err) {
                 db.close();
                 return done(err, false);
             }
-            
+
             if (user) {
                 done(null, user);
             } else {
@@ -34,6 +34,7 @@ const JWTLogin = new JwtStrategy(jwtOptions, function (payload, done) {
 
 passport.use(JWTLogin);
 
+// tslint:disable-next-line: no-namespace
 export namespace PassportService {
-    export const requireAuth = passport.authenticate('jwt', { session: false });
+    export const requireAuth = passport.authenticate("jwt", { session: false });
 }

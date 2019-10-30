@@ -20,10 +20,9 @@ class Application {
         this.app.listen(this.port, () => console.log("Server listening on port " + this.port + "!"));
     }
 
-    // sets up to allow cross-origin support from any host.  You can change the options to limit who can access the api.
-    // This is not a good security measure as it can easily be bypassed,
-    // but should be setup correctly anyway.  Without this, angular would not be able to access the api it it is on
-    // another server.
+    // Sets up to allow cross-origin support from any host.  You can change the options to limit who can access the api.
+    // This is not a good security measure as it can easily be bypassed, but should be setup correctly anyway. 
+    // Without this, angular would not be able to access the api it it is on another server.
     public initCors(): void {
         this.app.use(function(req: express.Request, res: express.Response, next: any) {
             res.header("Access-Control-Allow-Origin", "*");
@@ -33,7 +32,7 @@ class Application {
             next();
         });
     }
-    // setup routes for the express server
+    // Setup routes for the express server
     public buildRoutes(): void {
         this.app.use("/api", new ApiRouter().getRouter());
     }
