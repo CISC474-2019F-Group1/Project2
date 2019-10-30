@@ -1,4 +1,6 @@
+scripts/src/login.ts
 scripts/build/
 node_modules/
 trainsDB/
+login.ts
 mongo.txt
