@@ -1,7 +1,6 @@
 import bodyParser from "body-parser";
 import express from "express";
-
-
+import {Config} from "./config";
 import {ApiRouter} from "./router";
 
 class Application {
@@ -10,7 +9,7 @@ class Application {
 
     constructor() {
         this.app = express();
-        this.port = +process.env.serverPort || 3000;
+        this.port = Config.port;
         this.app.use(bodyParser.urlencoded({ extended: false }));
         this.app.use(bodyParser.json());
         this.initCors();
