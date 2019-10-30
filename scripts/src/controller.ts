@@ -35,8 +35,8 @@ export class Controller {
       const myobj = req.body;
       dbo.collection("Users").insertOne(myobj, function(err, res) {
       if (err) { throw err; }
-        console.log("1 Doc Inserted to Users");
-        db.close();
+      console.log("1 Doc Inserted to Users");
+      db.close();
       });
     });
     res.send(res.statusCode);
