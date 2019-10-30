@@ -1,9 +1,9 @@
+import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import express from "express";
 import {STATUS_CODES} from "http";
-import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import mongodb from "mongodb";
-import bcrypt from "bcryptjs";
 import {Config} from "./config";
 import {User} from "./user";
 
@@ -37,10 +37,10 @@ function extractUserInfo(user: any) {
 function hashPassword(password: string, cb: (err: Error, hashedPassword?: string) => any) {
     const SALT_FACTOR = 5;
 
-    bcrypt.genSalt(SALT_FACTOR, function (err, salt) {
+    bcrypt.genSalt(SALT_FACTOR, function(err, salt) {
         if (err) { return cb(err); }
 
-        bcrypt.hash(password, salt, function (err, hash) {
+        bcrypt.hash(password, salt, function(err, hash) {
             if (err) { return cb(err); }
             cb(null, hash);
         });
@@ -79,9 +79,9 @@ export class AuthenticationController {
                     hashPassword(password, function(err, hashedPassword) {
                         if (err) { throw err; }
                         const user = {
-                            email: email,
+                            email,
                             password: hashedPassword,
-                            name: name
+                            name
                         };
                         console.log(user);
                         Users.insertOne(user, function(err, dbres) {
@@ -133,5 +133,5 @@ export class AuthenticationController {
             validated: true
         });
     }
-    
+
 }
