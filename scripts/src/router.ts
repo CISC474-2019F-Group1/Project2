@@ -22,6 +22,7 @@ export class ApiRouter {
         this.router.get("/hello", this.controller.getHello);
         this.router.post("/hello/:userid", this.controller.postHello);
         this.router.post("/createUsr", this.controller.postCreateUser);
+        this.router.put("/updateUsr", this.controller.putUpdateCustomer);
 
         return this.router;
     }

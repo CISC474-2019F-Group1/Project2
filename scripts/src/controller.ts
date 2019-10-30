@@ -1,6 +1,6 @@
 import express from "express";
 import {STATUS_CODES} from "http";
-import mongodb from "mongodb";
+import mongodb, { ObjectID, ObjectId } from "mongodb";
 import {Config} from "./config";
 
 export class Controller {
@@ -40,11 +40,25 @@ export class Controller {
         db.close();
       });
     });
-    res.send(req.statusCode);
+    res.send(res.statusCode);
   }
 
   public putUpdateCustomer(req: express.Request, res: express.Response) {
     // return success, update customer
+    mongodb.connect(Config.database, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db("trainsDB");
+      var myquery = { _id : new ObjectId("5db3359121427b0e707a0ac7") };
+      var newvalues = { $set: { firstName: "Peter", lastName: "Canyon" } };
+      dbo
+        .collection("Users")
+        .updateOne(myquery, newvalues, function(err, res) {
+          if (err) throw err;
+          console.log("1 document updated");
+          db.close();
+        });
+    });
+    res.send(res.statusCode)
   }
 
   public putUpdateTicket(req: express.Request, res: express.Response) {
