@@ -34,7 +34,7 @@ function extractUserInfo(user: any) {
     };
 }
 
-function hashPassword(password: string, cb: (err: Error, hashedPassword: string) => any) {
+function hashPassword(password: string, cb: (err: Error, hashedPassword?: string) => any) {
     const SALT_FACTOR = 5;
 
     bcrypt.genSalt(SALT_FACTOR, function (err, salt) {
