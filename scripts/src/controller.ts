@@ -47,9 +47,9 @@ export class Controller {
     // return success, update customer
     mongodb.connect(Config.database, function(err, db) {
       if (err) { throw err; }
-      let dbo = db.db("trainsDB");
-      let myquery = { _id : new ObjectId("5db3359121427b0e707a0ac7") };
-      let newvalues = { $set: { firstName: "Peter", lastName: "Canyon" } };
+      const dbo = db.db("trainsDB");
+      const myquery = { _id : new ObjectId("5db3359121427b0e707a0ac7") };
+      const newvalues = { $set: { firstName: "Peter", lastName: "Canyon" } };
       dbo
         .collection("Users")
         .updateOne(myquery, newvalues, function(err, res) {
