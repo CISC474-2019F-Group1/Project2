@@ -30,6 +30,7 @@ mongodb.connect(Config.database, function(err, db) {
 curTime = startTime;
 stationQueue.push(startStation);
 
+// The main algorithm
 while(stationQueue.length > 0){
 
   // Set current station to the station at the beginning of the queue, update currentTime
