@@ -29,8 +29,6 @@ export class ApiRouter {
         this.router.get("/routes", this.controller.getRoutes);
         this.router.get("/user/tickets/:userId", this.controller.getUserTickets);
 
-
-
         return this.router;
     }
 }

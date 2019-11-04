@@ -1,8 +1,8 @@
 import bodyParser from "body-parser";
 import express from "express";
 import {Config} from "./config";
-import {ApiRouter} from "./router";
 import { Pathfinder } from "./pathfinder";
+import {ApiRouter} from "./router";
 
 class Application {
     public app: express.Application;
@@ -25,7 +25,7 @@ class Application {
     }
 
     // Sets up to allow cross-origin support from any host.  You can change the options to limit who can access the api.
-    // This is not a good security measure as it can easily be bypassed, but should be setup correctly anyway. 
+    // This is not a good security measure as it can easily be bypassed, but should be setup correctly anyway.
     // Without this, angular would not be able to access the api it it is on another server.
     public initCors(): void {
         this.app.use(function(req: express.Request, res: express.Response, next: any) {

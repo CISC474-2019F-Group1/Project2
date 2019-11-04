@@ -2,7 +2,7 @@ import {STATUS_CODES} from "http";
 import mongodb, { ObjectID, ObjectId } from "mongodb";
 import {Config} from "./config";
 
-interface Station{
+interface Station {
   id: number;
   abbreviation: string;
   fullname: string;
@@ -10,7 +10,7 @@ interface Station{
   routeBefore: Route;
 }
 
-interface Route{
+interface Route {
   id: number;
   startStation: string;
   destStation: string;
@@ -18,29 +18,29 @@ interface Route{
   trips: Array<[Date, Date]>;
 }
 
-let stations: Array<Station>; // Station code, timeToStation, RouteTo id
-let routes: Array<Route>; // Route id, start, destination
+let stations: Station[]; // Station code, timeToStation, RouteTo id
+let routes: Route[]; // Route id, start, destination
 let startStation: Station; // Station code of query start
 let destStation: Station; // Station code of where we're going
 let curStation: Station; // Station code of current station
-let stationQueue: Array<Station>; // For keeping track of which stations haven't been visited yet
-let visitedQueue: Array<Station>; // For keeping track of which stations have been visited
+let stationQueue: Station[]; // For keeping track of which stations haven't been visited yet
+let visitedQueue: Station[]; // For keeping track of which stations have been visited
 let startTime: number; // 12am of the selected day
 let curTime: number; // Current time in the algorithm
 let curRoute: Route; // Current route in the algorithm
-let currentRoutes: Array<Route>; // The routes that start with curStation
+let currentRoutes: Route[]; // The routes that start with curStation
 
-export class Pathfinder{
+export class Pathfinder {
 
-public findPath(){
+public findPath() {
 
   mongodb.connect(Config.database, function(err, db) {
       if (err) { throw err; }
       const dbo = db.db("trainsDB");
       dbo.collection("stations").find().toArray(function(err, res) {
         if (err) { throw err; }
-        for(let o in res){
-          stations.push(JSON.parse(o.slice(0,1) + ', "timeToStation": 0, "routeBefore": null }'));
+        for (const o in res) {
+          stations.push(JSON.parse(o.slice(0, 1) + ', "timeToStation": 0, "routeBefore": null }'));
         }
         db.close();
       });
@@ -100,7 +100,7 @@ while(stationQueue.length > 0){
     }
 
     //
-    
+
     // Add the destination station back to the overall list with the update time
     stations.push(tempDest);
 
