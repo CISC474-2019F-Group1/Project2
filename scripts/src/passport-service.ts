@@ -2,7 +2,7 @@ import mongodb from "mongodb";
 import passport from "passport";
 import {ExtractJwt, Strategy as JwtStrategy} from "passport-jwt";
 import {Config} from "./config";
-import {User} from "./user";
+import {IUser} from "./user";
 
 const jwtOptions = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -34,6 +34,7 @@ const JWTLogin = new JwtStrategy(jwtOptions, function(payload, done) {
 
 passport.use(JWTLogin);
 
+// tslint:disable-next-line: no-namespace
 export namespace PassportService {
     export const requireAuth = passport.authenticate("jwt", { session: false });
 }

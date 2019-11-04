@@ -21,8 +21,15 @@ export class ApiRouter {
         // Other routes
         this.router.get("/hello", this.controller.getHello);
         this.router.post("/hello/:userid", this.controller.postHello);
-        this.router.post("/createUsr", this.controller.postCreateUser);
-        this.router.put("/updateUsr", this.controller.putUpdateCustomer);
+        this.router.post("/createUsr", this.authController.register);
+        this.router.put("/user/updateUsr/:userid", this.controller.putUpdateCustomer);
+        this.router.get("/allTrains", this.controller.getAllTrains);
+        this.router.get("/train/:trainId", this.controller.getTrain);
+        this.router.get("/getUsrData/:userid", this.controller.getUser);
+        this.router.get("/routes", this.controller.getRoutes);
+        this.router.get("/user/tickets/:userId", this.controller.getUserTickets);
+
+
 
         return this.router;
     }

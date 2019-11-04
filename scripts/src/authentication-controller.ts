@@ -5,11 +5,11 @@ import {STATUS_CODES} from "http";
 import jwt from "jsonwebtoken";
 import mongodb from "mongodb";
 import {Config} from "./config";
-import {User} from "./user";
+import {IUser} from "./user";
 
 function generateToken(userInfo: any) {
     return jwt.sign(userInfo, Config.secret, {
-        expiresIn: 10000 // in seconds
+        expiresIn: 10000 // Seconds
     });
 }
 
@@ -38,10 +38,10 @@ function hashPassword(password: string, cb: (err: Error, hashedPassword?: string
     const SALT_FACTOR = 5;
 
     bcrypt.genSalt(SALT_FACTOR, function(err, salt) {
-        if (err) { return cb(err); }
+        if (err) { return err; }
 
         bcrypt.hash(password, salt, function(err, hash) {
-            if (err) { return cb(err); }
+            if (err) { return err; }
             cb(null, hash);
         });
     });
@@ -111,7 +111,9 @@ export class AuthenticationController {
                 }
                 if (!user) {
                     db.close();
-                    return res.status(400).json({ error: "Your login details could not be verified. Please try again." });
+                    return res.status(400).json({ 
+                        error: "Your login details could not be verified. Please try again."
+                    });
                 }
                 comparePassword(user.password, req.body.password, function(err, isMatch) {
                     if (err) { return res.status(400).json({ error: "bad data" }); }
