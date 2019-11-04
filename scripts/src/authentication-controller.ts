@@ -38,10 +38,17 @@ function hashPassword(password: string, cb: (err: Error, hashedPassword?: string
     const SALT_FACTOR = 5;
 
     bcrypt.genSalt(SALT_FACTOR, function(err, salt) {
+<<<<<<< HEAD
+        if (err) { return cb(err); }
+
+        bcrypt.hash(password, salt, function(err, hash) {
+            if (err) { return cb(err); }
+=======
         if (err) { return err; }
 
         bcrypt.hash(password, salt, function(err, hash) {
             if (err) { return err; }
+>>>>>>> b43fb8d6dca0d8fa633eb54d6b0112626888660d
             cb(null, hash);
         });
     });

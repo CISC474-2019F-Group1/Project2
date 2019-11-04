@@ -2,10 +2,12 @@ import bodyParser from "body-parser";
 import express from "express";
 import {Config} from "./config";
 import {ApiRouter} from "./router";
+import { Pathfinder } from "./pathfinder";
 
 class Application {
     public app: express.Application;
     public port: number;
+    private pathfinder: Pathfinder;
 
     constructor() {
         this.app = express();
@@ -18,6 +20,8 @@ class Application {
     public start(): void {
         this.buildRoutes();
         this.app.listen(this.port, () => console.log("Server listening on port " + this.port + "!"));
+        this.pathfinder = new Pathfinder();
+        this.pathfinder.findPath();
     }
 
     // Sets up to allow cross-origin support from any host.  You can change the options to limit who can access the api.
