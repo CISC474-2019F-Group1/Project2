@@ -28,26 +28,26 @@ export class Controller {
     // Return user info
   }
 
-  public postCreateUser(req: express.Request, res: express.Response) {
-    mongodb.connect(Config.database, function(err, db) {
-      if (err) { throw err; }
-      const dbo = db.db("trainsDB");
-      const myobj = req.body;
-      dbo.collection("Users").insertOne(myobj, function(err, res) {
-      if (err) { throw err; }
-      console.log("1 Doc Inserted to Users");
-      db.close();
-      });
-    });
-    res.send(res.statusCode);
-  }
+  // public postCreateUser(req: express.Request, res: express.Response) {
+  //   mongodb.connect(Config.database, function(err, db) {
+  //     if (err) { throw err; }
+  //     const dbo = db.db("trainsDB");
+  //     const myobj = req.body;
+  //     dbo.collection("Users").insertOne(myobj, function(err, res) {
+  //     if (err) { throw err; }
+  //     console.log("1 Doc Inserted to Users");
+  //     db.close();
+  //     });
+  //   });
+  //   res.send(res.statusCode);
+  // }
 
   public putUpdateCustomer(req: express.Request, res: express.Response) {
     mongodb.connect(Config.database, function(err, db) {
       if (err) { throw err; }
       let dbo = db.db("trainsDB");
-      let myquery = { _id: new ObjectId("5db3359121427b0e707a0ac7") };
-      let newvalues = { $set: { firstName: "Peter", lastName: "Canyon" } };
+      let myquery = { _id: req.params.userid };
+      let newvalues = req.body.firstname; //double check the JSON can be passed as such
       dbo
         .collection("Users")
         .updateOne(myquery, newvalues, function(err, res) {
@@ -73,5 +73,9 @@ export class Controller {
 
   public getStations(req: express.Request, res: express.Response) {
     // Return stations
+  }
+
+  public getUserTickets(req: express.Request, res: express.Response){
+    //returns users tickets 
   }
 }
