@@ -27,7 +27,11 @@ export class ApiRouter {
         this.router.get("/train/:trainId", this.controller.getTrain);
         this.router.get("/getUsrData/:userid", this.controller.getUser);
         this.router.get("/routes", this.controller.getRoutes);
-        this.router.get("/user/tickets/:userId", this.controller.getUserTickets);
+        this.router.get("/user/tickets/:userid", this.controller.getUserTickets);
+        this.router.post("/user/assignTicket", this.controller.postBuyTicket);
+        this.router.delete("/user/:userid",this.controller.archiveCustomer);
+
+    
 
 
 
