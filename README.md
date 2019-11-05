@@ -58,7 +58,7 @@ Express/Mongo server application (to be used as backend for module 3)
 
 ### Returns
 
-    -
+    - 
 #### [Back to top](#quick-reference)
 ---
 ## /allTrains
