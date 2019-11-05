@@ -205,3 +205,19 @@ Express/Mongo server application (to be used as backend for module 3)
 
 #### [Back to top](#quick-reference)
 ---
+## /user/updateUsr/{userId}
+
+### Headers
+
+    - N/A
+
+### Body
+
+    - N/A
+
+### Returns
+
+    -
+
+#### [Back to top](#quick-reference)
+---
