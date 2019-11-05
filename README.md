@@ -129,7 +129,7 @@ Express/Mongo server application (to be used as backend for module 3)
 
 ### Headers
 
-    - N/A
+   - "Bearer" : OAuth Token 
 
 ### Body
 
@@ -145,7 +145,7 @@ Express/Mongo server application (to be used as backend for module 3)
 
 ### Headers
 
-    - N/A
+    - "Bearer" : OAuth Token 
 
 ### Body
 
@@ -161,7 +161,7 @@ Express/Mongo server application (to be used as backend for module 3)
 
 ### Headers
 
-    - N/A
+    - "Bearer" : OAuth Token 
 
 ### Body
 
@@ -177,7 +177,7 @@ Express/Mongo server application (to be used as backend for module 3)
 
 ### Headers
 
-    - N/A
+    - "Bearer" : OAuth Token 
 
 ### Body
 
@@ -193,7 +193,7 @@ Express/Mongo server application (to be used as backend for module 3)
 
 ### Headers
 
-    - N/A
+    - "Bearer" : OAuth Token 
 
 ### Body
 
@@ -201,7 +201,7 @@ Express/Mongo server application (to be used as backend for module 3)
 
 ### Returns
 
-    -
+    - 
 
 #### [Back to top](#quick-reference)
 ---
@@ -209,7 +209,7 @@ Express/Mongo server application (to be used as backend for module 3)
 
 ### Headers
 
-    - N/A
+    - "Bearer" : OAuth Token 
 
 ### Body
 
