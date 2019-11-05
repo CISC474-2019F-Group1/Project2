@@ -11,7 +11,7 @@ Express/Mongo server application (to be used as backend for module 3)
 | [/user/updateUsr/{userId}](/user/updateUsr/{userId}) | PUT         | JSON     | Statuscode  | Updates user profile                     |
 | [/createUsr](/createUsr)                             | POST        | JSON     | OAuth Token | Create and authenticate user             |
 | [/login](#/login)                                    | POST        | JSON     | OAuth Token | Login in User                            |
-| [/authorize](#/authorize)                            | GET         | N/A      | Status(200) | TODO                                     |
+| [/authorize](#authorize)                            | GET         | N/A      | Status(200) | TODO                                     |
 | [/allTrains](#/allTrains)                            | GET         | N/A      | JSON        | Gets all trains as JSON                  |
 | [/train/{trainId}](#/train/{trainId})                | GET         | JSON     | JSON        | Gets train by train ID as JSON           |
 | [/getUsrData/{userId}](#/getUsrData/{userId})        | GET         | User ID  | JSON        | Returns user profile                     |
