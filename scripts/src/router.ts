@@ -14,14 +14,14 @@ export class ApiRouter {
 
         // Auth routes
         this.router.use("/auth", this.authRouter);
-        this.authRouter.post("/register", this.authController.register);
+        this.router.post("/createUsr", this.authController.register);
         this.authRouter.post("/login", this.authController.login);
         this.authRouter.get("/authorize", PassportService.requireAuth, this.authController.authorize);
 
         // Other routes
-        this.router.get("/hello", this.controller.getHello);
-        this.router.post("/hello/:userid", this.controller.postHello);
-        this.router.post("/createUsr", this.authController.register);
+        //this.router.get("/hello", this.controller.getHello);
+        //this.router.post("/hello/:userid", this.controller.postHello);
+        
         this.router.put("/user/updateUsr/:userid", this.controller.putUpdateCustomer);
         this.router.get("/allTrains", this.controller.getAllTrains);
         this.router.get("/train/:trainId", this.controller.getTrain);
