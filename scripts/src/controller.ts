@@ -59,8 +59,12 @@ export class Controller {
     res.send(res.statusCode);
   }
 
-  public putUpdateTicket(req: express.Request, res: express.Response) {
+  public postBuyTicket(req: express.Request, res: express.Response) {
     // Update seat, return success/ failure
+  }
+
+  public archiveCustomer(req: express.Request, res: express.Response){
+    //change role to archived, dont delete right away
   }
 
   public getTickets(req: express.Request, res: express.Response) {
