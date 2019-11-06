@@ -18,7 +18,7 @@ Express/Mongo server application (to be used as backend for module 3)
 | [/routes](#routes)                                  | GET         | N/A      | JSON        | Returns JSON of available routes         |
 | [/user/tickets/{userId}](#userticketsuserId)    | GET         | User ID  | JSON        | Returns JSON of users ticket history     |
 | [/user/assignTicket](#userassignTicket)             | POST        | JSON     | StatusCode  | Registers a ticket to a user             |
-| [/user/{userId}](#user{userId})                    | DELETE      | N/A      | StatusCode | Archives user to be deleted after a time |
+| [/user/{userId}](#useruserId)                    | DELETE      | N/A      | StatusCode | Archives user to be deleted after a time |
 
 ---
 
@@ -26,8 +26,9 @@ Express/Mongo server application (to be used as backend for module 3)
 
 ---
 
-## /authorize
+## /authorize 
 
+### POST
 ### Headers
 
     - "Bearer" : OAuth Token 
@@ -44,10 +45,10 @@ Express/Mongo server application (to be used as backend for module 3)
 ---
 
 ## /login
-
+### POST
 ### Headers
 
-    - TODO
+    - N/A
 
 ### Body
 
@@ -65,7 +66,7 @@ Express/Mongo server application (to be used as backend for module 3)
 #### [Back to top](#quick-reference)
 ---
 ## /allTrains
-
+### GET
 ### Headers
 
     - N/A
@@ -96,7 +97,7 @@ Express/Mongo server application (to be used as backend for module 3)
 #### [Back to top](#quick-reference)
 ---
 ## /train/{trainId}
-
+### GET
 ### Headers
 
     - N/A
@@ -117,7 +118,7 @@ Express/Mongo server application (to be used as backend for module 3)
 #### [Back to top](#quick-reference)
 ---
 ## /routes 
-
+### GET
 ### Headers
 
     - N/A
@@ -154,14 +155,23 @@ Express/Mongo server application (to be used as backend for module 3)
 #### [Back to top](#quick-reference)
 ---
 ## /createUsr
-
+### POST
 ### Headers
 
     - N/A
 
 ### Body
 
-    - N/A
+    {
+        id: ObjectID,
+        firstName: String,
+        lastName: String,
+        email: String,
+        username: String,
+        password: String,
+        role: String,
+        trips: Array[Object{id: ObjectID, cost: Int64, route: String}]
+    }
 
 ### Returns
 
@@ -172,10 +182,10 @@ Express/Mongo server application (to be used as backend for module 3)
 #### [Back to top](#quick-reference)
 ---
 ## /getUsrData/{userId}
-
+### GET
 ### Headers
 
-   - "Bearer" : OAuth Token 
+    - "Bearer" : OAuth Token 
 
 ### Body
 
@@ -197,7 +207,7 @@ Express/Mongo server application (to be used as backend for module 3)
 #### [Back to top](#quick-reference)
 ---
 ## /user/tickets/{userId}
-
+### GET
 ### Headers
 
     - "Bearer" : OAuth Token 
@@ -228,7 +238,7 @@ Express/Mongo server application (to be used as backend for module 3)
 #### [Back to top](#quick-reference)
 ---
 ## /user/assignTicket
-
+### POST
 ### Headers
 
     - "Bearer" : OAuth Token 
@@ -244,7 +254,7 @@ Express/Mongo server application (to be used as backend for module 3)
 #### [Back to top](#quick-reference)
 ---
 ## /user/{userId}
-
+### DELETE
 ### Headers
 
     - "Bearer" : OAuth Token 
@@ -260,7 +270,7 @@ Express/Mongo server application (to be used as backend for module 3)
 #### [Back to top](#quick-reference)
 ---
 ## /user/updateUsr/{userId}
-
+### PUT
 ### Headers
 
     - "Bearer" : OAuth Token 
