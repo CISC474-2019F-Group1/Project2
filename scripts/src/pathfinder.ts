@@ -227,7 +227,7 @@ public findPath(route: string, startDate: Date) {
 
             }
 
-            console.log(tickets);
+            return tickets;
                 
           });
 
