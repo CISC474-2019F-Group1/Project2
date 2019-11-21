@@ -29,8 +29,8 @@ interface Ticket {
   cost: number,
   startPlace: String,
   destPlace: String,
-  startTime: Date,
-  destTime: Date
+  startTime: String,
+  destTime: String
 }
 
 let stations: Station[]; // All the stations in the database
@@ -211,8 +211,8 @@ public findPath(route: string, startDate: Date) {
                   cost: 100,
                   startPlace: tempObj.routeBefore[0].startStation,
                   destPlace: tempObj.routeBefore[0].destStation,
-                  startTime: tempObj.routeBefore[1][0],
-                  destTime: tempObj.routeBefore[1][1]
+                  startTime: tempObj.routeBefore[1][0].toString(),
+                  destTime: tempObj.routeBefore[1][1].toString()
                 }
 
                 tickets.unshift(newTicket);
