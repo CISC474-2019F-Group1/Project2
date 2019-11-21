@@ -7,15 +7,30 @@ interface Station {
   abbreviation: string;
   fullname: string;
   timeToStation: number;
-  routeBefore: Route;
+  routeBefore: [Route,[Date,Date]];
 }
 
 interface Route {
   id: number;
   startStation: string;
   destStation: string;
-  train: string;
-  trips: Array<[Date, Date]>;
+  train: Train;
+  trips: Array<[string, string]>;
+}
+
+interface Train {
+  name: string;
+  capacity: number;
+}
+
+interface Ticket {
+  id: number,
+  routeId: number,
+  cost: number,
+  startPlace: String,
+  destPlace: String,
+  startTime: Date,
+  destTime: Date
 }
 
 let stations: Station[]; // All the stations in the database
@@ -24,11 +39,12 @@ let startStation: Station; // Station of query start
 let desStation: Station; // Station of where we're going
 let curStation: Station; // Station of current station
 let stationQueue: Station[]; // For keeping track of which stations haven't been visited yet
-let visitedQueue: Station[]; // For keeping track of which stations have been visited
+let visitedQueue: String[]; // For keeping track of which stations have been visited
 let startTime: number; // 12am of the selected day
 let curTime: number; // Current time in the algorithm
 let curRoute: Route; // Current route in the algorithm
 let currentRoutes: Route[]; // The routes that start with curStation
+let tickets: Ticket[]; // The array of tickets that will be returned
 
 export class Pathfinder {
 
@@ -38,6 +54,7 @@ public findPath(route: string, startDate: Date) {
   routes = [];
   stationQueue = [];
   visitedQueue = [];
+  tickets = [];
 
   // Push stations from database into stations array
   mongodb.connect(Config.database, function(err, db) {
@@ -63,104 +80,160 @@ public findPath(route: string, startDate: Date) {
       // After stations are loaded, load routes
       }).then(function(res){
 
-        dbo.collection("routes").find().forEach(function(res) {
-          let tempRoute: Route = {
-            id: res.id,
-            startStation: res.startStation,
-            destStation: res.destStation,
-            train: res.train,
-            trips: res.trips
-          }
-          routes.push(tempRoute);
-        });
+        const promise2 = new Promise(function(resolve, reject){
 
-    // After routes are loaded, run the rest of the code
-    }).then(function(){
-
-      // Initialize startStation, destStation, and startTime variables
-      let startString = route.substr(0,3);
-      let destString = route.substr(3,3);
-      startStation = stations.find(function(element){
-        return element.abbreviation == startString;
-      });
-      desStation = stations.find(function(element){
-        return element.abbreviation == destString;
-      });
-      startTime = startDate.getTime();
-      curTime = startTime;
-      stationQueue.push(startStation);
-
-      // The main algorithm
-      while(stationQueue.length > 0){
-
-        // Set current station to the station at the beginning of the queue, update currentTime
-        curStation = stationQueue.shift();
-        curTime = startTime + curStation.timeToStation;
-
-        // Get all the routes that start with that station
-        for(let r of routes){
-
-          if(r.startStation == curStation.abbreviation){
-            currentRoutes.push(r);
-          }
-
-        }
-
-        // Go through all the given routes
-        while(currentRoutes.length > 0){
-
-          // Get route and remove it from list
-          curRoute = currentRoutes.pop();
-
-          // Get destination station information and remove it temporarily from stations array
-          let tempDest: Station;
-          for(let i: number = 0;i<stations.length;i++){
-            if(curRoute.destStation == stations[i].abbreviation){
-              tempDest = stations[i];
-              stations.splice(i, 1);
-              break;
+          dbo.collection("routes").find().forEach(function(res) {
+            let tempRoute: Route = {
+              id: res.id,
+              startStation: res.startStation,
+              destStation: res.destStation,
+              train: res.train,
+              trips: res.trips
             }
-          }
+            routes.push(tempRoute);
+            resolve(1);
+          });
 
-          // Find trip that is starts after currentTime that ends the earliest
-          let curTimes = curRoute.trips;
-          let timeTo: Array<[Date,Date,number]>; // Route start date, Route dest date, time from overall start date to route dest time
-          for(let i = 0;i<curTimes.length;i++){
-            timeTo.push([curTimes[i][0], curTimes[i][1], curTimes[i][1].getTime()-startTime]);
-          }
+          // Run the rest of the function
+          }).then(function(){
 
-          let minRoute: [Date, Date];
-          let minTime = Number.MAX_VALUE;
-          // Find route that ends the soonest
-          for(let i = 0;i<timeTo.length;i++){
-            // If it starts after current time and is less than the current minimum time, set the new minimum route
-            if((timeTo[i][2] < minTime) && (timeTo[i][0].getTime() > curTime)){
-              minRoute = [timeTo[i][0], timeTo[i][1]];
-              minTime = timeTo[i][2];
+            // Initialize startStation, destStation, and startTime variables
+            let startString = route.substr(0,3);
+            let destString = route.substr(3,3);
+            startStation = stations.find(function(element){
+              return element.abbreviation == startString;
+            });
+            desStation = stations.find(function(element){
+              return element.abbreviation == destString;
+            });
+            startTime = startDate.getTime();
+            curTime = startTime;
+            startStation.timeToStation = 0;
+            stationQueue.push(startStation);
+
+            // The main algorithm
+            while(stationQueue.length > 0){
+
+              // Set current station to the station at the beginning of the queue, update currentTime
+              curStation = stationQueue.shift();
+              if(curStation.timeToStation < Number.MAX_VALUE){
+                curTime = startTime + curStation.timeToStation;
+              }
+              currentRoutes = [];
+
+              visitedQueue.push(curStation.abbreviation);
+
+              // Get all the routes that start with that station
+              for(let r of routes){
+
+                if(r.startStation == curStation.abbreviation){
+                  currentRoutes.push(r);
+                }
+
+              }
+
+              // Go through all the given routes
+              while(currentRoutes.length > 0){
+
+                // Get route and remove it from list
+                curRoute = currentRoutes.pop();
+
+                // Get destination station information and remove it temporarily from stations array
+                let tempDest: Station;
+                for(let i: number = 0;i<stations.length;i++){
+                  if(curRoute.destStation == stations[i].abbreviation){
+                    tempDest = stations[i];
+                    stations.splice(i, 1);
+                    break;
+                  }
+                }
+
+                // Find trip that is starts after currentTime that ends the earliest
+                let curTimes = curRoute.trips;
+                let timeTo: Array<[Date,Date,number]>; // Route start date, Route dest date, time from overall start date to route dest time
+                timeTo = [];
+                for(let i = 0;i<curTimes.length;i++){
+                  let curTimeOne = new Date(curTimes[i][0]);
+                  let curTimeTwo = new Date(curTimes[i][1]);
+                  timeTo.push([curTimeOne, curTimeTwo, curTimeTwo.getTime()-startTime]);
+                }
+
+                let minRoute: [Date, Date];
+                let minTime = Number.MAX_VALUE;
+                // Find route that ends the soonest
+                for(let i = 0;i<timeTo.length;i++){
+                  // If it starts after current time and is less than the current minimum time, set the new minimum route
+                  if((timeTo[i][2] < minTime) && (timeTo[i][0].getTime() > curTime)){
+                    minRoute = [timeTo[i][0], timeTo[i][1]];
+                    minTime = timeTo[i][2];
+                  }
+                }
+
+                // Check if the time to the destination is less than the current marked time, change it if it is
+                if(minTime < tempDest.timeToStation){
+                  tempDest.timeToStation = minTime;
+                  tempDest.routeBefore = [curRoute,minRoute];
+                }
+
+                // Add the destination station back to the overall list with the update time
+                stations.push(tempDest);
+
+                // If the station isn't on the queue and hasn't been visited before, add it
+                if((!stationQueue.includes(tempDest)) && (!visitedQueue.includes(tempDest.abbreviation))){
+                  stationQueue.push(tempDest);
+                }
+
+              }
+
             }
-          }
 
-          // Check if the time to the destination is less than the current marked time, change it if it is
-          if(minTime < tempDest.timeToStation){
-            tempDest.timeToStation = minTime;
-            tempDest.routeBefore = curRoute;
-          }
+            // With pathfinding done, go through an generate the tickets
+            let nextStation:String = desStation.abbreviation;
+            let ticketId: number = 0;
+            while(nextStation != null){
 
-          // Add the destination station back to the overall list with the update time
-          stations.push(tempDest);
+              let tempObj: Station;
 
-          // If the station isn't on the queue and hasn't been visited before, add it
-          if((!stationQueue.includes(tempDest)) && (!visitedQueue.includes(tempDest))){
-            stationQueue.push(tempDest);
-          }
+              // Load the next station with its routeBefore
+              for(let i = 0;i<stations.length;i++){
+                if(stations[i].abbreviation == nextStation){
+                  tempObj = stations[i];
+                  break;
+                }
+              }
 
-        }
+              // If it has a route before, make a ticket from that route
+              if(tempObj.routeBefore != null){
 
-      }
+                let newTicket:Ticket = {
+                  id: ++ticketId,
+                  routeId: tempObj.routeBefore[0].id,
+                  cost: 100,
+                  startPlace: tempObj.routeBefore[0].startStation,
+                  destPlace: tempObj.routeBefore[0].destStation,
+                  startTime: tempObj.routeBefore[1][0],
+                  destTime: tempObj.routeBefore[1][1]
+                }
 
-    });
+                tickets.unshift(newTicket);
+
+                nextStation = tempObj.routeBefore[0].startStation;
+
+              }else{ // If there's no route before, end the loop
+
+                nextStation = null;
+
+              }
+
+            }
+
+            console.log(tickets);
+                
+          });
 
   });
+
+});
 
 }
 
