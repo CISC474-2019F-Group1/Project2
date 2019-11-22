@@ -10,7 +10,7 @@ const jwtOptions = {
 };
 
 // Setting up JWT login strategy
-const JWTLogin = new JwtStrategy(jwtOptions, function (payload, done) {
+const JWTLogin = new JwtStrategy(jwtOptions, function(payload, done) {
     mongodb.connect(Config.database, function(err, db) {
         if (err) { throw err; }
         const Users = db.db("trainsDB").collection("Users");

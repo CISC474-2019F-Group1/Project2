@@ -53,9 +53,9 @@ export class Controller {
   public putUpdateCustomer(req: express.Request, res: express.Response) {
     mongodb.connect(Config.database, function(err, db) {
       if (err) { throw err; }
-      let dbo = db.db("trainsDB");
-      let myquery = { _id: req.params.userid };
-      let newvalues = req.body.firstname; //double check the JSON can be passed as such
+      const dbo = db.db("trainsDB");
+      const myquery = { _id: req.params.userid };
+      const newvalues = req.body.firstname; // double check the JSON can be passed as such
       dbo
         .collection("Users")
         .updateOne(myquery, newvalues, function(err, res) {
@@ -99,7 +99,7 @@ export class Controller {
     // Return stations
   }
 
-  public getUserTickets(req: express.Request, res: express.Response){
-    //returns users tickets 
+  public getUserTickets(req: express.Request, res: express.Response) {
+    // returns users tickets
   }
 }

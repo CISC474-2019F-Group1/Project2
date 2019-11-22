@@ -34,7 +34,7 @@ function extractUserInfo(user: any) {
     };
 }
 
-function hashPassword(password: string, cb: (err: Error, hashedPassword: string) => any) {
+function hashPassword(password: string, cb: (err: Error, hashedPassword?: string) => any) {
     const SALT_FACTOR = 5;
 
     bcrypt.genSalt(SALT_FACTOR, function(err, salt) {
@@ -111,7 +111,7 @@ export class AuthenticationController {
                 }
                 if (!user) {
                     db.close();
-                    return res.status(400).json({ 
+                    return res.status(400).json({
                         error: "Your login details could not be verified. Please try again."
                     });
                 }
