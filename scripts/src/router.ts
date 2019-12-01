@@ -2,6 +2,7 @@ import express from "express";
 import {AuthenticationController} from "./authentication-controller";
 import {Controller} from "./controller";
 import {PassportService} from "./passport-service";
+import { Pathfinder } from "./pathfinder";
 
 export class ApiRouter {
     private authRouter = express.Router();
@@ -28,9 +29,12 @@ export class ApiRouter {
         this.router.get("/getUsrData/:userid", this.controller.getUser);
         this.router.get("/routes", this.controller.getRoutes);
         this.router.get("/stations", this.controller.getStations);
-        this.router.get("/user/tickets/:userid", this.controller.getUserTickets);
-        this.router.post("/user/assignTicket", this.controller.postBuyTicket);
-        this.router.delete("/user/:userid",this.controller.archiveCustomer);
+        this.router.get("/user/tickets/:userId", this.controller.getUserTickets);
+        this.router.get("/path/:fromto/:date", function(req,res){
+            let tempDate = new Date(Number(req.params.date));
+            let pathfinder = new Pathfinder();
+            pathfinder.findPath(req.params.fromto,tempDate, res);
+        });
 
         return this.router;
     }

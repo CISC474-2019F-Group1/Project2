@@ -21,8 +21,6 @@ class Application {
     public start(): void {
         this.buildRoutes();
         this.app.listen(this.port, () => console.log("Server listening on port " + this.port + "!"));
-        //this.pathFinder = new Pathfinder();
-        //this.pathFinder.findPath("BOSMIA", new Date(2019,11,12,0,0,0,0));
     }
 
     // Sets up to allow cross-origin support from any host.  You can change the options to limit who can access the api.
