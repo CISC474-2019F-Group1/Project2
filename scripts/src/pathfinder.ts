@@ -1,6 +1,7 @@
 import {STATUS_CODES} from "http";
 import mongodb, { ObjectID, ObjectId, Double } from "mongodb";
 import {Config} from "./config";
+import express from "express";
 
 interface Station {
   id: number;
@@ -48,13 +49,17 @@ let tickets: Ticket[]; // The array of tickets that will be returned
 
 export class Pathfinder {
 
-public findPath(route: string, startDate: Date) {
+  constructor(){
 
   stations = [];
   routes = [];
   stationQueue = [];
   visitedQueue = [];
   tickets = [];
+
+  }
+
+public findPath(route: string, startDate: Date, resp: express.Response) {
 
   // Push stations from database into stations array
   mongodb.connect(Config.database, function(err, db) {
@@ -227,7 +232,7 @@ public findPath(route: string, startDate: Date) {
 
             }
 
-            return tickets;
+            resp.send(tickets);
                 
           });
 
