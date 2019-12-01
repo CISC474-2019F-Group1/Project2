@@ -1,7 +1,38 @@
 import express from "express";
 import {STATUS_CODES} from "http";
-import mongodb, { ObjectID, ObjectId } from "mongodb";
+import mongodb, { ObjectID, ObjectId, Cursor } from "mongodb";
 import {Config} from "./config";
+
+interface Station {
+  id: number;
+  abbreviation: string;
+  fullname: string;
+  timeToStation: number;
+  routeBefore: [Route,[Date,Date]];
+}
+
+interface Route {
+  id: number;
+  startStation: string;
+  destStation: string;
+  train: Train;
+  trips: Array<[string, string]>;
+}
+
+interface Train {
+  name: string;
+  capacity: number;
+}
+
+interface Ticket {
+  id: number,
+  routeId: number,
+  cost: number,
+  startPlace: String,
+  destPlace: String,
+  startTime: String,
+  destTime: String
+}
 
 export class Controller {
   // public getHello(req: express.Request, res: express.Response): void {
@@ -92,11 +123,66 @@ export class Controller {
   }
 
   public getRoutes(req: express.Request, res: express.Response) {
-    // Return routes
+    let result: Route[] = [];
+    mongodb.connect(Config.database, function(err, db) {
+
+      if (err) { throw err; }
+      const dbo = db.db("trainsDB");
+
+      const promise = new Promise(function(resolve, reject){
+
+        dbo.collection("routes").find().forEach(function(resp){
+          let tempRoute: Route = {
+            id: resp.id,
+            startStation: resp.startStation,
+            destStation: resp.destStation,
+            train: resp.train,
+            trips: resp.trips
+          }
+          result.push(tempRoute);
+          resolve(1);
+        });
+
+      }).then(function(){
+
+        res.send(result);
+
+      });
+
+    });
+
   }
 
   public getStations(req: express.Request, res: express.Response) {
-    // Return stations
+    
+    let result: Station[] = [];
+    mongodb.connect(Config.database, function(err, db) {
+
+      if (err) { throw err; }
+      const dbo = db.db("trainsDB");
+
+      const promise = new Promise(function(resolve, reject){
+
+        dbo.collection("stations").find().forEach(function(resp){
+          let tempStation: Station = {
+            id: resp.id,
+            abbreviation: resp.abbreviation,
+            fullname: resp.fullname,
+            timeToStation: Number.MAX_VALUE,
+            routeBefore: null
+          }
+          result.push(tempStation);
+          resolve(1);
+        });
+
+      }).then(function(){
+
+        res.send(result);
+
+      });
+
+    });
+
   }
 
   public getUserTickets(req: express.Request, res: express.Response) {
