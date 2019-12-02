@@ -24,13 +24,13 @@ export class ApiRouter {
         //this.router.get("/hello", this.controller.getHello);
         //this.router.post("/hello/:userid", this.controller.postHello);
         
-        this.router.put("/user/updateUsr/:userid", this.controller.putUpdateCustomer);
-        this.router.get("/allTrains", this.controller.getAllTrains);
+        this.router.get("/userInfo", PassportService.requireAuth, this.controller.getUser);
+        this.router.put("/userInfo", PassportService.requireAuth, this.controller.putUpdateCustomer);
+        this.router.get("/userTickets", PassportService.requireAuth, this.controller.getUserTickets);
+        this.router.get("/trains", this.controller.getAllTrains);
         this.router.get("/train/:trainId", this.controller.getTrain);
-        this.router.get("/getUsrData/:userid", this.controller.getUser);
         this.router.get("/routes", this.controller.getRoutes);
         this.router.get("/stations", this.controller.getStations);
-        this.router.get("/user/tickets/:userId", this.controller.getUserTickets);
         this.router.get("/path/:fromto/:date", function(req,res){
             let tempDate = new Date(Number(req.params.date));
             let pathfinder = new Pathfinder();

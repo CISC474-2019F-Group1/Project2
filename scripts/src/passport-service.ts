@@ -13,7 +13,7 @@ const jwtOptions = {
 const JWTLogin = new JwtStrategy(jwtOptions, function(payload, done) {
     mongodb.connect(Config.database, function(err, db) {
         if (err) { throw err; }
-        const Users = db.db("trainsDB").collection("Users");
+        const Users = db.db("trainsDB").collection("users");
         Users.findOne({ email: payload.email }, function(err, user) {
             if (err) {
                 db.close();
