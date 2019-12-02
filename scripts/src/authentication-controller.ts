@@ -30,7 +30,9 @@ function extractUserInfo(user: any) {
     // TODO
     return {
         email: user.email,
-        user: user.name
+        userFirst: user.firstName,
+        userLast: user.lastName,
+        userID: user._id
     };
 }
 
@@ -98,6 +100,8 @@ export class AuthenticationController {
                             const userInfo = extractUserInfo(dbres.ops[0]);
                             res.status(201).json({
                                 token: "JWT " + generateToken(userInfo),
+                                firstName: firstname,
+                                lastName: lastname,
                                 user: userInfo
                             });
                             db.close();
@@ -111,7 +115,7 @@ export class AuthenticationController {
     public login(req: express.Request, res: express.Response, next: express.NextFunction) {
         mongodb.connect(Config.database, function(err, db) {
             if (err) { throw err; }
-            const Users = db.db("trainsDB").collection("Users");
+            const Users = db.db("trainsDB").collection("users");
             Users.findOne({ email: req.body.email }, function(err, user) {
                 if (err) {
                     db.close();
