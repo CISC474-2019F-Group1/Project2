@@ -7,9 +7,11 @@ import mongodb from "mongodb";
 import {Config} from "./config";
 import {IUser} from "./user";
 
+const EXPIRES_IN_SECONDS = 10000;
+
 function generateToken(userInfo: any) {
     return jwt.sign(userInfo, Config.secret, {
-        expiresIn: 10000 // Seconds
+        expiresIn: EXPIRES_IN_SECONDS // Seconds
     });
 }
 
@@ -100,9 +102,8 @@ export class AuthenticationController {
                             const userInfo = extractUserInfo(dbres.ops[0]);
                             res.status(201).json({
                                 token: "JWT " + generateToken(userInfo),
-                                firstName: firstname,
-                                lastName: lastname,
-                                user: userInfo
+                                user: userInfo,
+                                expiresIn: EXPIRES_IN_SECONDS
                             });
                             db.close();
                         });
@@ -134,11 +135,21 @@ export class AuthenticationController {
                     const userInfo = extractUserInfo(user);
                     res.status(200).json({
                         token: "Bearer " + generateToken(userInfo),
-                        user: userInfo
+                        user: userInfo,
+                        expiresIn: EXPIRES_IN_SECONDS
                     });
                 });
                 db.close();
             });
+        });
+    }
+    
+    public refresh(req: express.Request, res: express.Response, next: express.NextFunction) {
+        const userInfo = extractUserInfo(req.user);
+        res.status(200).json({
+            token: "Bearer " + generateToken(userInfo),
+            user: userInfo,
+            expiresIn: EXPIRES_IN_SECONDS
         });
     }
 
