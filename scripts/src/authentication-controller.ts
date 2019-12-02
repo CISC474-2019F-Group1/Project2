@@ -1,17 +1,17 @@
+import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import express from "express";
 import {STATUS_CODES} from "http";
-import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import mongodb from "mongodb";
-import bcrypt from "bcryptjs";
 import {Config} from "./config";
-import {User} from "./user";
+import {IUser} from "./user";
 
 const EXPIRES_IN_SECONDS = 10000;
 
 function generateToken(userInfo: any) {
     return jwt.sign(userInfo, Config.secret, {
-        expiresIn: EXPIRES_IN_SECONDS // in seconds
+        expiresIn: EXPIRES_IN_SECONDS // Seconds
     });
 }
 
@@ -32,18 +32,20 @@ function extractUserInfo(user: any) {
     // TODO
     return {
         email: user.email,
-        user: user.name
+        userFirst: user.firstName,
+        userLast: user.lastName,
+        userID: user._id
     };
 }
 
 function hashPassword(password: string, cb: (err: Error, hashedPassword?: string) => any) {
     const SALT_FACTOR = 5;
 
-    bcrypt.genSalt(SALT_FACTOR, function (err, salt) {
-        if (err) { return cb(err); }
+    bcrypt.genSalt(SALT_FACTOR, function(err, salt) {
+        if (err) { return err; }
 
-        bcrypt.hash(password, salt, function (err, hash) {
-            if (err) { return cb(err); }
+        bcrypt.hash(password, salt, function(err, hash) {
+            if (err) { return err; }
             cb(null, hash);
         });
     });
@@ -53,22 +55,26 @@ export class AuthenticationController {
 
     public register(req: express.Request, res: express.Response, next: express.NextFunction) {
         const email = req.body.email;
-        const name = req.body.name;
+        const lastname = req.body.lastName;
+        const firstname = req.body.firstName;
+        const username = req.body.username;
         const password = req.body.password;
+        const role = req.body.role;
+        const trips = req.body.trips;
 
         if (!email) {
             return res.status(422).send({ error: "You must enter an email address." });
         }
-        if (!name) {
-            return res.status(422).send({ error: "You must enter your full name." });
-        }
+        // if (!name) {
+        //     return res.status(422).send({ error: "You must enter your full name." });
+        // }
         if (!password) {
             return res.status(422).send({ error: "You must enter a password." });
         }
 
         mongodb.connect(Config.database, function(err, db) {
             if (err) {throw err; }
-            const Users = db.db("trainsDB").collection("Users");
+            const Users = db.db("trainsDB").collection("users");
             Users.findOne({ email: req.body.email }, function(err, existingUser) {
                 if (err) {
                     db.close();
@@ -81,9 +87,13 @@ export class AuthenticationController {
                     hashPassword(password, function(err, hashedPassword) {
                         if (err) { throw err; }
                         const user = {
-                            email: email,
+                            email,
                             password: hashedPassword,
-                            name: name
+                            firstname,
+                            lastname,
+                            username,
+                            role,
+                            trips
                         };
                         console.log(user);
                         Users.insertOne(user, function(err, dbres) {
@@ -106,7 +116,7 @@ export class AuthenticationController {
     public login(req: express.Request, res: express.Response, next: express.NextFunction) {
         mongodb.connect(Config.database, function(err, db) {
             if (err) { throw err; }
-            const Users = db.db("trainsDB").collection("Users");
+            const Users = db.db("trainsDB").collection("users");
             Users.findOne({ email: req.body.email }, function(err, user) {
                 if (err) {
                     db.close();
@@ -114,7 +124,9 @@ export class AuthenticationController {
                 }
                 if (!user) {
                     db.close();
-                    return res.status(400).json({ error: "Your login details could not be verified. Please try again." });
+                    return res.status(400).json({
+                        error: "Your login details could not be verified. Please try again."
+                    });
                 }
                 comparePassword(user.password, req.body.password, function(err, isMatch) {
                     if (err) { return res.status(400).json({ error: "bad data" }); }
@@ -146,5 +158,5 @@ export class AuthenticationController {
             validated: true
         });
     }
-    
+
 }
