@@ -51,22 +51,26 @@ export class AuthenticationController {
 
     public register(req: express.Request, res: express.Response, next: express.NextFunction) {
         const email = req.body.email;
-        const name = req.body.name;
+        const lastname = req.body.lastName;
+        const firstname = req.body.firstName;
+        const username = req.body.username;
         const password = req.body.password;
+        const role = req.body.role;
+        const trips = req.body.trips;
 
         if (!email) {
             return res.status(422).send({ error: "You must enter an email address." });
         }
-        if (!name) {
-            return res.status(422).send({ error: "You must enter your full name." });
-        }
+        // if (!name) {
+        //     return res.status(422).send({ error: "You must enter your full name." });
+        // }
         if (!password) {
             return res.status(422).send({ error: "You must enter a password." });
         }
 
         mongodb.connect(Config.database, function(err, db) {
             if (err) {throw err; }
-            const Users = db.db("trainsDB").collection("Users");
+            const Users = db.db("trainsDB").collection("users");
             Users.findOne({ email: req.body.email }, function(err, existingUser) {
                 if (err) {
                     db.close();
@@ -81,7 +85,11 @@ export class AuthenticationController {
                         const user = {
                             email,
                             password: hashedPassword,
-                            name
+                            firstname,
+                            lastname,
+                            username,
+                            role,
+                            trips
                         };
                         console.log(user);
                         Users.insertOne(user, function(err, dbres) {

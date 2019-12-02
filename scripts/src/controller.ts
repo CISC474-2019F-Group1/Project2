@@ -22,7 +22,8 @@ export class Controller {
     mongodb.connect(Config.database, function(err, db) {
       if (err) { throw err; }
       let dbo = db.db("trainsDB");
-      trainData = dbo.collection("Users").find();
+      trainData = dbo.collection("routes"); 
+      console.log(trainData);
       db.close();
     })
     res.send(trainData)
