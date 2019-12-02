@@ -1,14 +1,14 @@
 import express from "express";
-import {STATUS_CODES} from "http";
+import { STATUS_CODES } from "http";
 import mongodb, { ObjectID, ObjectId, Cursor } from "mongodb";
-import {Config} from "./config";
+import { Config } from "./config";
 
 interface Station {
   id: number;
   abbreviation: string;
   fullname: string;
   timeToStation: number;
-  routeBefore: [Route,[Date,Date]];
+  routeBefore: [Route, [Date, Date]];
 }
 
 interface Route {
@@ -47,76 +47,88 @@ export class Controller {
   //   res.send(req.params.userid);
   // }
 
+  //might not need
   public getAllTrains(req: express.Request, res: express.Response) {
     // Return list of all trains
 
-    mongodb.connect(Config.database, function(err, db) {
+    mongodb.connect(Config.database, function (err, db) {
       if (err) { throw err; }
       let dbo = db.db("trainsDB");
-      let trainData = dbo.collection("routes").find({}).toArray(function(err, result) {
+      let trainData = dbo.collection("routes").find({}).toArray(function (err, result) {
         if (err) throw err;
         res.send(trainData)
         db.close();
-      console.log(trainData)
-      res.send(trainData)
+        console.log(trainData)
+        res.send(trainData)
+      })
     })
-  })
-    
+
   }
 
+  //might not need
   public getTrain(req: express.Request, res: express.Response) {
     // Return train based on Train ID
   }
 
   public getUser(req: express.Request, res: express.Response) {
     // Return user info
-    
+    mongodb.connect(Config.database, function (err, db) {
+      if (err) { throw err; }
+      const Users = db.db("trainsDB").collection("users");
+      console.log(req.params.userid);
+      Users.findOne({ _id: new ObjectId(req.params.userid) }, function (err, user) {
+        res.send({
+          email: user.email,
+          lastname: user.lastname,
+          firstname: user.firstname,
+          username: user.username,
+          role: user.role,
+          trips: user.trips
+        })
+        db.close();
+      });
+    });
   }
-
-  // public postCreateUser(req: express.Request, res: express.Response) {
-  //   mongodb.connect(Config.database, function(err, db) {
-  //     if (err) { throw err; }
-  //     const dbo = db.db("trainsDB");
-  //     const myobj = req.body;
-  //     dbo.collection("Users").insertOne(myobj, function(err, res) {
-  //     if (err) { throw err; }
-  //     console.log("1 Doc Inserted to Users");
-  //     db.close();
-  //     });
-  //   });
-  //   res.send(res.statusCode);
-  // }
 
   public putUpdateCustomer(req: express.Request, res: express.Response) {
-    mongodb.connect(Config.database, function(err, db) {
+    mongodb.connect(Config.database, function (err, db) {
       if (err) { throw err; }
       const dbo = db.db("trainsDB");
-      const myquery = { _id: req.params.userid };
-      const newvalues = req.body.firstname; // double check the JSON can be passed as such
-      dbo
-        .collection("Users")
-        .updateOne(myquery, newvalues, function(err, res) {
-          if (err) { throw err; }
-          console.log("1 document updated");
-          db.close();
-        });
+      const myquery = { _id: new ObjectId(req.params.userid) };
+      console.log(req.params.userid)
+      const newvalues = {
+        $set: {
+          email: req.body.email,
+          lastname: req.body.lastname,
+          firstname: req.body.firstname,
+          username: req.body.username,
+          role: req.body.role,
+          trips: req.body.trips
+        }
+      }; // double check the JSON can be passed as such
+      dbo.collection("users").updateOne(myquery, newvalues, function (err, res) {
+        if (err) { throw err; }
+        console.log("1 document updated");
+        db.close();
+      });
     });
-    res.send(res.statusCode);
+    res.send('updated')
   }
+
 
   public postBuyTicket(req: express.Request, res: express.Response) {
     // Update seat, return success/ failure
   }
 
-  public archiveCustomer(req: express.Request, res: express.Response){
-    mongodb.connect(Config.database, function(err, db) {
+  public archiveCustomer(req: express.Request, res: express.Response) {
+    mongodb.connect(Config.database, function (err, db) {
       if (err) { throw err; }
       let dbo = db.db("trainsDB");
-      let myquery = { _id: req.params.userid };
-      let newvalues = {role: "Archived"}
+      let myquery = { _id: new ObjectId(req.params.userid) };
+      let newvalues = { role: "Archived" }
       dbo
-        .collection("Users")
-        .updateOne(myquery, newvalues, function(err, res) {
+        .collection("users")
+        .updateOne(myquery, newvalues, function (err, res) {
           if (err) { throw err; }
           console.log("1 document updated");
           db.close();
@@ -124,20 +136,16 @@ export class Controller {
     });
   }
 
-  public getTickets(req: express.Request, res: express.Response) {
-    // Return list of seats
-  }
-
   public getRoutes(req: express.Request, res: express.Response) {
     let result: Route[] = [];
-    mongodb.connect(Config.database, function(err, db) {
+    mongodb.connect(Config.database, function (err, db) {
 
       if (err) { throw err; }
       const dbo = db.db("trainsDB");
 
-      const promise = new Promise(function(resolve, reject){
+      const promise = new Promise(function (resolve, reject) {
 
-        dbo.collection("routes").find().forEach(function(resp){
+        dbo.collection("routes").find().forEach(function (resp) {
           let tempRoute: Route = {
             id: resp.id,
             startStation: resp.startStation,
@@ -149,7 +157,7 @@ export class Controller {
           resolve(1);
         });
 
-      }).then(function(){
+      }).then(function () {
 
         res.send(result);
 
@@ -160,16 +168,16 @@ export class Controller {
   }
 
   public getStations(req: express.Request, res: express.Response) {
-    
+
     let result: Station[] = [];
-    mongodb.connect(Config.database, function(err, db) {
+    mongodb.connect(Config.database, function (err, db) {
 
       if (err) { throw err; }
       const dbo = db.db("trainsDB");
 
-      const promise = new Promise(function(resolve, reject){
+      const promise = new Promise(function (resolve, reject) {
 
-        dbo.collection("stations").find().forEach(function(resp){
+        dbo.collection("stations").find().forEach(function (resp) {
           let tempStation: Station = {
             id: resp.id,
             abbreviation: resp.abbreviation,
@@ -181,7 +189,7 @@ export class Controller {
           resolve(1);
         });
 
-      }).then(function(){
+      }).then(function () {
 
         res.send(result);
 
