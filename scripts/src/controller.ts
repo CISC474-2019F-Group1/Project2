@@ -76,13 +76,11 @@ export class Controller {
       if (err) { throw err; }
       const Users = db.db("trainsDB").collection("users");
       console.log(req.params.userid);
-      Users.findOne({ _id: new ObjectId(req.params.userid) }, function (err, user) {
+      Users.findOne({ email: req.user.email }, function (err, user) {
         res.send({
           email: user.email,
           lastname: user.lastname,
           firstname: user.firstname,
-          username: user.username,
-          role: user.role,
           trips: user.trips
         })
         db.close();
@@ -94,15 +92,12 @@ export class Controller {
     mongodb.connect(Config.database, function (err, db) {
       if (err) { throw err; }
       const dbo = db.db("trainsDB");
-      const myquery = { _id: new ObjectId(req.params.userid) };
+      const myquery = { email: req.user.email };
       console.log(req.params.userid)
       const newvalues = {
         $set: {
-          email: req.body.email,
           lastname: req.body.lastname,
           firstname: req.body.firstname,
-          username: req.body.username,
-          role: req.body.role,
           trips: req.body.trips
         }
       }; // double check the JSON can be passed as such
@@ -118,22 +113,6 @@ export class Controller {
 
   public postBuyTicket(req: express.Request, res: express.Response) {
     // Update seat, return success/ failure
-  }
-
-  public archiveCustomer(req: express.Request, res: express.Response) {
-    mongodb.connect(Config.database, function (err, db) {
-      if (err) { throw err; }
-      let dbo = db.db("trainsDB");
-      let myquery = { _id: new ObjectId(req.params.userid) };
-      let newvalues = { role: "Archived" }
-      dbo
-        .collection("users")
-        .updateOne(myquery, newvalues, function (err, res) {
-          if (err) { throw err; }
-          console.log("1 document updated");
-          db.close();
-        });
-    });
   }
 
   public getRoutes(req: express.Request, res: express.Response) {
