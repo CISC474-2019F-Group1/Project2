@@ -16,6 +16,7 @@ export class ApiRouter {
         this.router.use("/auth", this.authRouter);
         this.authRouter.post("/register", this.authController.register);
         this.authRouter.post("/login", this.authController.login);
+        this.authRouter.get("/refresh", PassportService.requireAuth, this.authController.refresh);
         this.authRouter.get("/authorize", PassportService.requireAuth, this.authController.authorize);
 
         // Other routes

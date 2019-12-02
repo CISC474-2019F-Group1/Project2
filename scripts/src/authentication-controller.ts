@@ -7,9 +7,11 @@ import bcrypt from "bcryptjs";
 import {Config} from "./config";
 import {User} from "./user";
 
+const EXPIRES_IN_SECONDS = 10000;
+
 function generateToken(userInfo: any) {
     return jwt.sign(userInfo, Config.secret, {
-        expiresIn: 10000 // in seconds
+        expiresIn: EXPIRES_IN_SECONDS // in seconds
     });
 }
 
@@ -34,7 +36,7 @@ function extractUserInfo(user: any) {
     };
 }
 
-function hashPassword(password: string, cb: (err: Error, hashedPassword: string) => any) {
+function hashPassword(password: string, cb: (err: Error, hashedPassword?: string) => any) {
     const SALT_FACTOR = 5;
 
     bcrypt.genSalt(SALT_FACTOR, function (err, salt) {
@@ -90,7 +92,8 @@ export class AuthenticationController {
                             const userInfo = extractUserInfo(dbres.ops[0]);
                             res.status(201).json({
                                 token: "JWT " + generateToken(userInfo),
-                                user: userInfo
+                                user: userInfo,
+                                expiresIn: EXPIRES_IN_SECONDS
                             });
                             db.close();
                         });
@@ -120,11 +123,21 @@ export class AuthenticationController {
                     const userInfo = extractUserInfo(user);
                     res.status(200).json({
                         token: "Bearer " + generateToken(userInfo),
-                        user: userInfo
+                        user: userInfo,
+                        expiresIn: EXPIRES_IN_SECONDS
                     });
                 });
                 db.close();
             });
+        });
+    }
+    
+    public refresh(req: express.Request, res: express.Response, next: express.NextFunction) {
+        const userInfo = extractUserInfo(req.user);
+        res.status(200).json({
+            token: "Bearer " + generateToken(userInfo),
+            user: userInfo,
+            expiresIn: EXPIRES_IN_SECONDS
         });
     }
 
