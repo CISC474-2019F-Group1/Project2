@@ -49,14 +49,19 @@ export class Controller {
 
   public getAllTrains(req: express.Request, res: express.Response) {
     // Return list of all trains
-    let trainData;
+
     mongodb.connect(Config.database, function(err, db) {
       if (err) { throw err; }
       let dbo = db.db("trainsDB");
-      trainData = dbo.collection("Users").find();
-      db.close();
+      let trainData = dbo.collection("routes").find({}).toArray(function(err, result) {
+        if (err) throw err;
+        res.send(trainData)
+        db.close();
+      console.log(trainData)
+      res.send(trainData)
     })
-    res.send(trainData)
+  })
+    
   }
 
   public getTrain(req: express.Request, res: express.Response) {
@@ -65,6 +70,7 @@ export class Controller {
 
   public getUser(req: express.Request, res: express.Response) {
     // Return user info
+    
   }
 
   // public postCreateUser(req: express.Request, res: express.Response) {
