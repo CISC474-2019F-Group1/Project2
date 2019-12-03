@@ -115,7 +115,18 @@ export class Controller {
   }
 
   public postBuyTicket(req: express.Request, res: express.Response) {
-    // Update seat, return success/ failure
+    mongodb.connect(Config.database, function(err, db) {
+      if (err) {
+        throw err;
+      }
+      const users = db.db('trainsDB').collection('users');
+      const trains = db.db("trainsDB").collection("routes");
+      let query = parseInt(req.params.id);
+      let usrQuery = req.params.userid;
+      users.updateOne({_id : new ObjectId(usrQuery)}, {$push: {trips: req.body}})
+      db.close();
+    });
+    res.send(req.body);
   }
 
   public getRoutes(req: express.Request, res: express.Response) {
