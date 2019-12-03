@@ -56,7 +56,7 @@ export class AuthenticationController {
         const lastname = req.body.lastname;
         const firstname = req.body.firstname;
         const password = req.body.password;
-        const trips = [];
+        const trips: any[] = [];
 
         if (!email) {
             return res.status(422).send({ error: "You must enter an email address." });
@@ -83,11 +83,11 @@ export class AuthenticationController {
                     hashPassword(password, function(err, hashedPassword) {
                         if (err) { throw err; }
                         const user = {
-                            email: email,
+                            email,
                             password: hashedPassword,
-                            firstname: firstname,
-                            lastname: lastname,
-                            trips: trips
+                            firstname,
+                            lastname,
+                            trips
                         };
                         console.log(user);
                         Users.insertOne(user, function(err, dbres) {
@@ -137,7 +137,7 @@ export class AuthenticationController {
             });
         });
     }
-    
+
     public refresh(req: express.Request, res: express.Response, next: express.NextFunction) {
         const userInfo = extractUserInfo(req.user);
         res.status(200).json({

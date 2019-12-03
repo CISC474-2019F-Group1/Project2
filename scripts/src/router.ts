@@ -21,9 +21,9 @@ export class ApiRouter {
         this.authRouter.get("/authorize", PassportService.requireAuth, this.authController.authorize);
 
         // Other routes
-        //this.router.get("/hello", this.controller.getHello);
-        //this.router.post("/hello/:userid", this.controller.postHello);
-        
+        // this.router.get("/hello", this.controller.getHello);
+        // this.router.post("/hello/:userid", this.controller.postHello);
+
         this.router.get("/userInfo", PassportService.requireAuth, this.controller.getUser);
         this.router.put("/userInfo", PassportService.requireAuth, this.controller.putUpdateCustomer);
         this.router.get("/userTickets", PassportService.requireAuth, this.controller.getUserTickets);
@@ -31,10 +31,10 @@ export class ApiRouter {
         this.router.get("/train/:trainId", this.controller.getTrain);
         this.router.get("/routes", this.controller.getRoutes);
         this.router.get("/stations", this.controller.getStations);
-        this.router.get("/path/:fromto/:date", function(req,res){
-            let tempDate = new Date(Number(req.params.date));
-            let pathfinder = new Pathfinder();
-            pathfinder.findPath(req.params.fromto,tempDate, res);
+        this.router.get("/path/:fromto/:date", function(req, res) {
+            const tempDate = new Date(Number(req.params.date));
+            const pathfinder = new Pathfinder();
+            pathfinder.findPath(req.params.fromto, tempDate, res);
         });
 
         return this.router;

@@ -1,9 +1,9 @@
 import bodyParser from "body-parser";
 import express from "express";
 import {Config} from "./config";
+import { DatabaseEditor } from "./editor";
 import { Pathfinder } from "./pathfinder";
 import {ApiRouter} from "./router";
-import { DatabaseEditor } from "./editor";
 
 class Application {
     public app: express.Application;
