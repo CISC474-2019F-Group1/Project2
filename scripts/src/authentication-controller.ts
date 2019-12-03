@@ -7,9 +7,11 @@ import mongodb from "mongodb";
 import {Config} from "./config";
 import {IUser} from "./user";
 
+const EXPIRES_IN_SECONDS = 10000;
+
 function generateToken(userInfo: any) {
     return jwt.sign(userInfo, Config.secret, {
-        expiresIn: 10000 // Seconds
+        expiresIn: EXPIRES_IN_SECONDS // Seconds
     });
 }
 
@@ -27,12 +29,10 @@ function comparePassword(userPassword: string, candidatePassword: string, cb: (e
 }
 
 function extractUserInfo(user: any) {
-    // TODO
     return {
         email: user.email,
-        userFirst: user.firstName,
-        userLast: user.lastName,
-        userID: user._id
+        firstname: user.firstname,
+        lastname: user.lastname
     };
 }
 
@@ -53,19 +53,17 @@ export class AuthenticationController {
 
     public register(req: express.Request, res: express.Response, next: express.NextFunction) {
         const email = req.body.email;
-        const lastname = req.body.lastName;
-        const firstname = req.body.firstName;
-        const username = req.body.username;
+        const lastname = req.body.lastname;
+        const firstname = req.body.firstname;
         const password = req.body.password;
-        const role = req.body.role;
-        const trips = req.body.trips;
+        const trips = [];
 
         if (!email) {
             return res.status(422).send({ error: "You must enter an email address." });
         }
-        // if (!name) {
-        //     return res.status(422).send({ error: "You must enter your full name." });
-        // }
+        if (!(firstname && lastname)) {
+             return res.status(422).send({ error: "You must enter your full name." });
+        }
         if (!password) {
             return res.status(422).send({ error: "You must enter a password." });
         }
@@ -85,13 +83,11 @@ export class AuthenticationController {
                     hashPassword(password, function(err, hashedPassword) {
                         if (err) { throw err; }
                         const user = {
-                            email,
+                            email: email,
                             password: hashedPassword,
-                            firstname,
-                            lastname,
-                            username,
-                            role,
-                            trips
+                            firstname: firstname,
+                            lastname: lastname,
+                            trips: trips
                         };
                         console.log(user);
                         Users.insertOne(user, function(err, dbres) {
@@ -99,10 +95,9 @@ export class AuthenticationController {
                             console.log(dbres.ops[0]);
                             const userInfo = extractUserInfo(dbres.ops[0]);
                             res.status(201).json({
-                                token: "JWT " + generateToken(userInfo),
-                                firstName: firstname,
-                                lastName: lastname,
-                                user: userInfo
+                                token: "Bearer " + generateToken(userInfo),
+                                user: userInfo,
+                                expiresIn: EXPIRES_IN_SECONDS
                             });
                             db.close();
                         });
@@ -134,11 +129,21 @@ export class AuthenticationController {
                     const userInfo = extractUserInfo(user);
                     res.status(200).json({
                         token: "Bearer " + generateToken(userInfo),
-                        user: userInfo
+                        user: userInfo,
+                        expiresIn: EXPIRES_IN_SECONDS
                     });
                 });
                 db.close();
             });
+        });
+    }
+    
+    public refresh(req: express.Request, res: express.Response, next: express.NextFunction) {
+        const userInfo = extractUserInfo(req.user);
+        res.status(200).json({
+            token: "Bearer " + generateToken(userInfo),
+            user: userInfo,
+            expiresIn: EXPIRES_IN_SECONDS
         });
     }
 

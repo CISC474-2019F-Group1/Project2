@@ -86,6 +86,7 @@ export class Controller {
         err,
         user
       ) {
+      Users.findOne({ email: req.user.email }, function (err, user) {
         res.send({
           email: user.email,
           lastname: user.lastname,
@@ -107,7 +108,6 @@ export class Controller {
       console.log(req.params.userid);
       const newvalues = {
         $set: {
-          email: req.body.email,
           lastname: req.body.lastname,
           firstname: req.body.firstname,
           trips: req.body.trips
@@ -146,27 +146,6 @@ export class Controller {
           //create ticket, insert to trips by userID
           //users.insertOne({_id : usrQuery}{})
         }
-
-        db.close();
-      });
-    });
-  }
-
-  // public archiveCustomer(req: express.Request, res: express.Response) {
-  //   mongodb.connect(Config.database, function (err, db) {
-  //     if (err) { throw err; }
-  //     let dbo = db.db("trainsDB");
-  //     let myquery = { _id: new ObjectId(req.params.userid) };
-  //     let newvalues ={ role: "Archived" } }
-  //     dbo
-  //       .collection("users")
-  //       .insertOne(myquery, newvalues, function (err, res) {
-  //         if (err) { throw err; }
-  //         console.log("1 document updated");
-  //         db.close();
-  //       });
-  //   });
-  // }
 
   public getRoutes(req: express.Request, res: express.Response) {
     let result: Route[] = [];
