@@ -42,17 +42,23 @@ export class Controller {
     // Return list of all trains
 
     mongodb.connect(Config.database, function(err, db) {
-      if (err) { throw err; }
+      if (err) {
+        throw err;
+      }
       const dbo = db.db("trainsDB");
-      const trainData = dbo.collection("routes").find({}).toArray(function(err, result) {
-        if (err) { throw err; }
-        res.send(trainData);
-        db.close();
-        console.log(trainData);
-        res.send(trainData);
-      });
+      const trainData = dbo
+        .collection("routes")
+        .find({})
+        .toArray(function(err, result) {
+          if (err) {
+            throw err;
+          }
+          res.send(trainData);
+          db.close();
+          console.log(trainData);
+          res.send(trainData);
+        });
     });
-
   }
 
   // might not need
@@ -63,9 +69,12 @@ export class Controller {
   public getUser(req: express.Request, res: express.Response) {
     // Return user info
     mongodb.connect(Config.database, function(err, db) {
-      if (err) { throw err; }
+      if (err) {
+        throw err;
+      }
       const Users = db.db("trainsDB").collection("users");
       console.log(req.params.userid);
+      //@ts-ignore
       Users.findOne({ email: req.user.email }, function(err, user) {
         res.send({
           email: user.email,
@@ -80,8 +89,11 @@ export class Controller {
 
   public putUpdateCustomer(req: express.Request, res: express.Response) {
     mongodb.connect(Config.database, function(err, db) {
-      if (err) { throw err; }
+      if (err) {
+        throw err;
+      }
       const dbo = db.db("trainsDB");
+      //@ts-ignore
       const myquery = { email: req.user.email };
       console.log(req.params.userid);
       const newvalues = {
@@ -92,7 +104,9 @@ export class Controller {
         }
       }; // double check the JSON can be passed as such
       dbo.collection("users").updateOne(myquery, newvalues, function(err, res) {
-        if (err) { throw err; }
+        if (err) {
+          throw err;
+        }
         console.log("1 document updated");
         db.close();
       });
@@ -107,64 +121,59 @@ export class Controller {
   public getRoutes(req: express.Request, res: express.Response) {
     const result: Route[] = [];
     mongodb.connect(Config.database, function(err, db) {
-
-      if (err) { throw err; }
+      if (err) {
+        throw err;
+      }
       const dbo = db.db("trainsDB");
 
       const promise = new Promise(function(resolve, reject) {
-
-        dbo.collection("routes").find().forEach(function(resp) {
-          const tempRoute: Route = {
-            id: resp.id,
-            startStation: resp.startStation,
-            destStation: resp.destStation,
-            train: resp.train,
-            trips: resp.trips
-          };
-          result.push(tempRoute);
-          resolve(1);
-        });
-
+        dbo
+          .collection("routes")
+          .find()
+          .forEach(function(resp) {
+            const tempRoute: Route = {
+              id: resp.id,
+              startStation: resp.startStation,
+              destStation: resp.destStation,
+              train: resp.train,
+              trips: resp.trips
+            };
+            result.push(tempRoute);
+            resolve(1);
+          });
       }).then(function() {
-
         res.send(result);
-
       });
-
     });
-
   }
 
   public getStations(req: express.Request, res: express.Response) {
-
     const result: Station[] = [];
     mongodb.connect(Config.database, function(err, db) {
-
-      if (err) { throw err; }
+      if (err) {
+        throw err;
+      }
       const dbo = db.db("trainsDB");
 
       const promise = new Promise(function(resolve, reject) {
-
-        dbo.collection("stations").find().forEach(function(resp) {
-          const tempStation: Station = {
-            id: resp.id,
-            abbreviation: resp.abbreviation,
-            fullname: resp.fullname,
-            timeToStation: Number.MAX_VALUE,
-            routeBefore: null
-          };
-          result.push(tempStation);
-          resolve(1);
-        });
-
+        dbo
+          .collection("stations")
+          .find()
+          .forEach(function(resp) {
+            const tempStation: Station = {
+              id: resp.id,
+              abbreviation: resp.abbreviation,
+              fullname: resp.fullname,
+              timeToStation: Number.MAX_VALUE,
+              routeBefore: null
+            };
+            result.push(tempStation);
+            resolve(1);
+          });
       }).then(function() {
-
         res.send(result);
-
       });
-
     });
-
   }
 
   public getUserTickets(req: express.Request, res: express.Response) {
