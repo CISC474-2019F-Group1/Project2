@@ -28,8 +28,9 @@ interface Ticket {
   id: number,
   routeId: number,
   cost: number,
-  startPlace: String,
-  destPlace: String,
+  train: Train,
+  startStation: String,
+  destStation: String,
   startTime: String,
   destTime: String
 }
@@ -214,8 +215,9 @@ public findPath(route: string, startDate: Date, resp: express.Response) {
                   id: ++ticketId,
                   routeId: tempObj.routeBefore[0].id,
                   cost: 100,
-                  startPlace: tempObj.routeBefore[0].startStation,
-                  destPlace: tempObj.routeBefore[0].destStation,
+                  train: tempObj.routeBefore[0].train,
+                  startStation: tempObj.routeBefore[0].startStation,
+                  destStation: tempObj.routeBefore[0].destStation,
                   startTime: tempObj.routeBefore[1][0].toString(),
                   destTime: tempObj.routeBefore[1][1].toString()
                 }

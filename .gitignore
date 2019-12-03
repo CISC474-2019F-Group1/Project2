@@ -4,3 +4,4 @@ node_modules/
 trainsDB/
 login.ts
 mongo.txt
+scripts/src/config.ts

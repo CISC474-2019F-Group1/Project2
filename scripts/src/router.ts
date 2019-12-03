@@ -24,6 +24,7 @@ export class ApiRouter {
         //this.router.post("/hello/:userid", this.controller.postHello);
         
         this.router.put("/user/updateUsr/:userid", this.controller.putUpdateCustomer);
+        this.router.post("/getTicket/:id/:userid", this.controller.postBuyTicket);
         this.router.get("/allTrains", this.controller.getAllTrains);
         this.router.get("/train/:trainId", this.controller.getTrain);
         this.router.get("/getUsrData/:userid", this.controller.getUser);
