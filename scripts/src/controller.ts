@@ -118,12 +118,10 @@ export class Controller {
       }
       const users = db.db("trainsDB").collection("users");
       const trains = db.db("trainsDB").collection("routes");
-      const query = parseInt(req.params.id);
-      const usrQuery = req.params.userid;
-      users.updateOne({_id : new ObjectId(usrQuery)}, {$push: {trips: req.body}});
+      users.updateOne({ email: req.user.email }, {$push: {trips: req.body}})
       db.close();
+      res.status(200).send();
     });
-    res.send(req.body);
   }
 
   public getRoutes(req: express.Request, res: express.Response) {
