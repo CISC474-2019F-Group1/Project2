@@ -67,14 +67,13 @@ export class Controller {
   }
 
   public getUser(req: express.Request, res: express.Response) {
+    console.log(req.user.email);
     // Return user info
     mongodb.connect(Config.database, function(err, db) {
       if (err) {
         throw err;
       }
       const Users = db.db("trainsDB").collection("users");
-      console.log(req.params.userid);
-      //@ts-ignore
       Users.findOne({ email: req.user.email }, function(err, user) {
         res.send({
           email: user.email,
@@ -93,9 +92,7 @@ export class Controller {
         throw err;
       }
       const dbo = db.db("trainsDB");
-      //@ts-ignore
       const myquery = { email: req.user.email };
-      console.log(req.params.userid);
       const newvalues = {
         $set: {
           lastname: req.body.lastname,
