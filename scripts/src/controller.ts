@@ -73,7 +73,7 @@ export class Controller {
         throw err;
       }
       const Users = db.db("trainsDB").collection("users");
-      //@ts-ignore
+      // @ts-ignore
       Users.findOne({ email: req.user.email }, function(err, user) {
         res.send({
           email: user.email,
@@ -92,7 +92,7 @@ export class Controller {
         throw err;
       }
       const dbo = db.db("trainsDB");
-      //@ts-ignore
+      // @ts-ignore
       const myquery = { email: req.user.email };
       const newvalues = {
         $set: {
@@ -116,7 +116,7 @@ export class Controller {
       if (err) {
         throw err;
       }
-      const users = db.db('trainsDB').collection('users');
+      const users = db.db("trainsDB").collection("users");
       const trains = db.db("trainsDB").collection("routes");
       users.updateOne({ email: req.user.email }, {$push: {trips: req.body}})
       db.close();
