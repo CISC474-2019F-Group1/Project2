@@ -66,7 +66,7 @@ export class Controller {
     // Return train based on Train ID
   }
 
-  public getUser(req: express.Request, res: express.Response) {
+  public getUserInfo(req: express.Request, res: express.Response) {
     // Return user info
     mongodb.connect(Config.database, function(err, db) {
       if (err) {
@@ -86,7 +86,7 @@ export class Controller {
     });
   }
 
-  public putUpdateCustomer(req: express.Request, res: express.Response) {
+  public putUserInfo(req: express.Request, res: express.Response) {
     mongodb.connect(Config.database, function(err, db) {
       if (err) {
         throw err;
@@ -97,19 +97,18 @@ export class Controller {
       const newvalues = {
         $set: {
           lastname: req.body.lastname,
-          firstname: req.body.firstname,
-          trips: req.body.trips
+          firstname: req.body.firstname
         }
       }; // double check the JSON can be passed as such
-      dbo.collection("users").updateOne(myquery, newvalues, function(err, res) {
+      dbo.collection("users").updateOne(myquery, newvalues, function(err, _) {
         if (err) {
           throw err;
         }
         console.log("1 document updated");
         db.close();
+        res.status(200).send();
       });
     });
-    res.send("updated");
   }
 
   public postBuyTicket(req: express.Request, res: express.Response) {

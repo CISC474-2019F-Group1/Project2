@@ -28,14 +28,6 @@ function comparePassword(userPassword: string, candidatePassword: string, cb: (e
     });
 }
 
-function extractUserInfo(user: any) {
-    return {
-        email: user.email,
-        firstname: user.firstname,
-        lastname: user.lastname
-    };
-}
-
 function hashPassword(password: string, cb: (err: Error, hashedPassword?: string) => any) {
     const SALT_FACTOR = 5;
 
@@ -47,6 +39,14 @@ function hashPassword(password: string, cb: (err: Error, hashedPassword?: string
             cb(null, hash);
         });
     });
+}
+
+function extractUserInfo(user: any) {
+    return {
+        email: user.email,
+        firstname: user.firstname,
+        lastname: user.lastname
+    };
 }
 
 export class AuthenticationController {
@@ -150,6 +150,48 @@ export class AuthenticationController {
     public authorize(req: express.Request, res: express.Response, next: express.NextFunction) {
         return res.status(200).json({
             validated: true
+        });
+    }
+    
+    public updatePassword(req: express.Request, res: express.Response) {
+        mongodb.connect(Config.database, function(err, db) {
+            if (err) { throw err; }
+            
+            // Validate current password
+            const Users = db.db("trainsDB").collection("users");
+            Users.findOne({ email: req.user.email }, function(err, user) {
+                if (err) {
+                    db.close();
+                    return res.status(400).json({ error: "bad data" });
+                }
+                if (!user) {
+                    db.close();
+                    return res.status(400).json({
+                        error: "Your login details could not be verified. Please try again."
+                    });
+                }
+                comparePassword(user.password, req.body.oldPassword, function(err, isMatch) {
+                    if (err) { return res.status(400).json({ error: "bad data" }); }
+                    if (!isMatch) { return res.status(400).json({ error: "Your login details could not be verified. Please try again." }); }
+                    // Now we know that old password is valid
+                    hashPassword(req.body.password, function(err, hashedPassword) {
+                        if (err) { throw err; }
+                        //@ts-ignore
+                        const myquery = { email: req.user.email };
+                        const newvalues = {
+                            $set: {
+                               password: hashedPassword
+                            }
+                        };
+                        Users.updateOne(myquery, newvalues, function(err, _) {
+                            if (err) { throw err; }
+                            console.log("1 password updated");
+                            db.close();
+                            res.status(200).send();
+                        });
+                    });
+                });
+            });
         });
     }
 
