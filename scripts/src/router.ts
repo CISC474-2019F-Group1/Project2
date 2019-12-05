@@ -25,7 +25,7 @@ export class ApiRouter {
         // this.router.get("/hello", this.controller.getHello);
         // this.router.post("/hello/:userid", this.controller.postHello);
 
-        this.router.post("/getTicket", PassportService.requireAuth, this.controller.postBuyTicket);
+        this.router.post("/getTicket", this.controller.postBuyTicket);
         this.router.get("/userInfo", PassportService.requireAuth, this.controller.getUserInfo);
         this.router.put("/userInfo", PassportService.requireAuth, this.controller.putUserInfo);
         this.router.get("/userTickets", PassportService.requireAuth, this.controller.getUserTickets);
