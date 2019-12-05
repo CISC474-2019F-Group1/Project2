@@ -220,8 +220,9 @@ public findPath(route: string, startDate: Date, resp: express.Response) {
                   train: tempObj.routeBefore[0].train,
                   startStation: tempObj.routeBefore[0].startStation,
                   destStation: tempObj.routeBefore[0].destStation,
-                  startTime: tempObj.routeBefore[1][0].toString(),
-                  destTime: tempObj.routeBefore[1][1].toString()
+                  trips: [
+                    [tempObj.routeBefore[1][0].toString(), tempObj.routeBefore[1][1].toString()]
+                  ]
                 };
 
                 tickets.unshift(newTicket);
