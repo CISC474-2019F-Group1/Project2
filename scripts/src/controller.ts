@@ -40,7 +40,6 @@ export class Controller {
   // might not need
   public getAllTrains(req: express.Request, res: express.Response) {
     // Return list of all trains
-
     mongodb.connect(Config.database, function(err, db) {
       if (err) {
         throw err;
@@ -61,10 +60,6 @@ export class Controller {
     });
   }
 
-  // might not need
-  public getTrain(req: express.Request, res: express.Response) {
-    // Return train based on Train ID
-  }
 
   public getUserInfo(req: express.Request, res: express.Response) {
     // Return user info
@@ -182,7 +177,4 @@ export class Controller {
     });
   }
 
-  public getUserTickets(req: express.Request, res: express.Response) {
-    // returns users tickets
-  }
 }
