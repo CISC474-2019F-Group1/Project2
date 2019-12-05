@@ -15,15 +15,16 @@ export class ApiRouter {
 
         // Auth routes
         this.router.use("/auth", this.authRouter);
-        this.authRouter.post("/register", this.authController.register); //
-        this.authRouter.post("/login", this.authController.login); //
+        this.authRouter.post("/register", this.authController.register);
+        this.authRouter.post("/login", this.authController.login);
         this.authRouter.get("/refresh", PassportService.requireAuth, this.authController.refresh);
-        this.authRouter.get("/authorize", PassportService.requireAuth, this.authController.authorize); //
+        this.authRouter.get("/authorize", PassportService.requireAuth, this.authController.authorize);
         this.authRouter.put("/updatePassword", PassportService.requireAuth, this.authController.updatePassword);
 
-        this.router.post("/getTicket", PassportService.requireAuth, this.controller.postBuyTicket); //
-        this.router.get("/userInfo", PassportService.requireAuth, this.controller.getUserInfo); //
-        this.router.put("/userInfo", PassportService.requireAuth, this.controller.putUserInfo); //
+        // Other routes
+        this.router.post("/getTicket", PassportService.requireAuth, this.controller.postBuyTicket);
+        this.router.get("/userInfo", PassportService.requireAuth, this.controller.getUserInfo);
+        this.router.put("/userInfo", PassportService.requireAuth, this.controller.putUserInfo);
         this.router.get("/trains", this.controller.getAllTrains);
         this.router.get("/routes", this.controller.getRoutes);
         this.router.get("/stations", this.controller.getStations);

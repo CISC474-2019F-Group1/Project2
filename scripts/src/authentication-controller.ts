@@ -89,10 +89,8 @@ export class AuthenticationController {
                             lastname,
                             trips
                         };
-                        console.log(user);
                         Users.insertOne(user, function(err, dbres) {
                             if (err) { throw err; }
-                            console.log(dbres.ops[0]);
                             const userInfo = extractUserInfo(dbres.ops[0]);
                             res.status(201).json({
                                 token: "Bearer " + generateToken(userInfo),
@@ -185,7 +183,6 @@ export class AuthenticationController {
                         };
                         Users.updateOne(myquery, newvalues, function(err, _) {
                             if (err) { throw err; }
-                            console.log("1 password updated");
                             db.close();
                             res.status(200).send();
                         });
