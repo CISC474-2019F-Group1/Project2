@@ -60,7 +60,6 @@ export class Controller {
     });
   }
 
-
   public getUserInfo(req: express.Request, res: express.Response) {
     // Return user info
     mongodb.connect(Config.database, function(err, db) {

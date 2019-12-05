@@ -152,11 +152,11 @@ export class AuthenticationController {
             validated: true
         });
     }
-    
+
     public updatePassword(req: express.Request, res: express.Response) {
         mongodb.connect(Config.database, function(err, db) {
             if (err) { throw err; }
-            
+
             // Validate current password
             const Users = db.db("trainsDB").collection("users");
             Users.findOne({ email: req.user.email }, function(err, user) {
@@ -176,7 +176,7 @@ export class AuthenticationController {
                     // Now we know that old password is valid
                     hashPassword(req.body.password, function(err, hashedPassword) {
                         if (err) { throw err; }
-                        //@ts-ignore
+                        // @ts-ignore
                         const myquery = { email: req.user.email };
                         const newvalues = {
                             $set: {
